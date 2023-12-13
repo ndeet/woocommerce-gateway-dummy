@@ -55,7 +55,16 @@ class WC_Gateway_Dummy extends WC_Payment_Gateway {
 		// Actions.
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_scheduled_subscription_payment_dummy', array( $this, 'process_subscription_payment' ), 10, 2 );
-	}
+
+    // Register webhook endpoint on wc-api.
+    add_action('woocommerce_api_dummy', [$this, 'process_webhook']);
+  }
+
+  public function process_webhook() {
+    $logger = wc_get_logger();
+    $context = array( 'source' => 'woocommerce-gateway-dummy' );
+    $logger->error( 'Triggered dummy webhook at time: ' . time(), $context );
+  }
 
 	/**
 	 * Initialise Gateway Settings Form Fields.
